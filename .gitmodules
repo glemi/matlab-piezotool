@@ -1,0 +1,9 @@
+[submodule "universal"]
+	path = dependencies/universal
+	url = https://github.com/glemi/matlab-universal.git
+[submodule "libraries"]
+	path = dependencies/libraries
+	url = https://github.com/glemi/matlab-libs.git
+[submodule "coupling"]
+	path = dependencies/coupling
+	url = https://github.com/glemi/matlab-coupling.git
