@@ -22,12 +22,16 @@ classdef WaferTable < handle
             this.UiTable = uitable('Parent', parent);
             this.WaferRepo = repo;
             
-            this.UiTable.Data = {''};
+            this.UiTable.Data = {'Please select a working directory.'};
             %this.UiTable.ColumnWidth = {this.UiTable.InnerPosition(3)-40};
             this.UiTable.CellSelectionCallback = @(~,e)this.onCellSelect(e);
         end
         function refresh(this)
             this.WaferRepo.update;
+            if isempty(this.WaferRepo.NodeTable)
+                return;
+            end
+            
             wafers = this.WaferRepo.NodeTable.Properties.RowNames(:);
             nodes  = table2cell(this.WaferRepo.NodeTable);
             
@@ -56,7 +60,7 @@ classdef WaferTable < handle
             this.UiTable.ColumnWidth = [{'auto' 'auto'}  num2cell(40*ones(1,size(nodes,2)))];
         end
         function onCellSelect(this, eventdata)
-            if length(eventdata.Indices) < 2
+            if length(eventdata.Indices) < 2 || isempty(this.WaferRepo.WaferIds)
                 return;
             end
             row  = eventdata.Indices(1,1);

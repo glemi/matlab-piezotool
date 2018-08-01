@@ -35,13 +35,14 @@ classdef DataApp < handle
         end
         
         function loadState(this)
-%             try 
+             try 
                 load datagui;
                 this.setworkingdir(workingdir);
                 this.setinputdir(inputdir);
-%             catch err
-%                 err
-%             end
+             catch err
+                 msgtxt = 'Please select the data and work directories (Menu File...)';
+                 waitfor(msgbox(msgtxt, 'Configure Directories', 'modal'));
+             end
         end
         function saveState(this)
             workingdir = this.WorkingDir;
