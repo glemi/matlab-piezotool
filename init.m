@@ -9,19 +9,22 @@ function init
     
     warning off MATLAB:table:RowsAddedNewVars;
 
-    addpath '../lib/GUI Layout Toolbox 2.3.1/layout';
-    addpath '../lib/For-Each';
-    addpath '../lib/inputsdlg_v2.1.2';
-    addpath '../lib/uicomponent';
-    addpath '../lib/mmx';
-    addpath '../universal';
+    restoredefaultpath;
     
-    addpath ..\coupling\fitting;
-    addpath ..\coupling\algorithm;
-    addpath ..\coupling\analysis;
-    addpath ..\coupling\auxilary;
-    addpath ..\coupling\model;
-    addpath ..\coupling\plotting;
+    addpath 'dependencies/universal';
+    
+    addpath 'dependencies/libraries/GUI Layout Toolbox 2.3.1/layout';
+    addpath 'dependencies/libraries/For-Each';
+    addpath 'dependencies/libraries/inputsdlg_v2.1.2';
+    addpath 'dependencies/libraries/uicomponent';
+    addpath 'dependencies/libraries/mmx';
+    
+    addpath 'dependencies/coupling/fitting';
+    addpath 'dependencies/coupling/algorithm';
+    addpath 'dependencies/coupling/analysis';
+    addpath 'dependencies/coupling/auxilary';
+    addpath 'dependencies/coupling/model';
+    addpath 'dependencies/coupling/plotting';
     
     format compact;
 end
