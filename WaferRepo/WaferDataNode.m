@@ -52,7 +52,7 @@ classdef WaferDataNode < handle
         end
         function [value, interv] = get(this, name, pos)
             if isempty(this.DataTable)
-                value = []; interv = []; return;
+                value = NaN; interv = NaN; return;
             end
             if nargin < 3
                 pos = this.DataTable.Position;

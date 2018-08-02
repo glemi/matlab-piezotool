@@ -73,19 +73,19 @@ classdef Formatter < handle
             xfmt = this.getFormat(xname);
             yfmt = this.getFormat(yname);
             if ~isempty(xfmt)
-                xtext = [xfmt.Name ' [' xfmt.LatexUnit ']'];
+                xtext = [xfmt.Name ' [$\rm ' xfmt.LatexUnit '$]'];
                 xlabel(xtext, 'Interpreter', 'Latex');
                 objs = findobj(ax, '-property', 'XData');
                 for obj = each(objs)
-                    obj.XData = obj.XData*xfmt.Scale;
+                    obj.XData = obj.XData/xfmt.Scale;
                 end
             end
             if ~isempty(yfmt)
-                xtext = [xfmt.Name ' [' xfmt.LatexUnit ']'];
-                title(xtext, 'Interpreter', 'Latex');
+                ytext = [yfmt.Name ' [$\rm ' yfmt.LatexUnit '$]'];
+                title(ytext, 'Interpreter', 'Latex');
                 objs = findobj(ax, '-property', 'XData');
                 for obj = each(objs)
-                    obj.XData = obj.XData*xfmt.Scale;
+                    obj.YData = obj.YData/yfmt.Scale;
                 end
             end
         end
