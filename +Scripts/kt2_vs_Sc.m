@@ -20,12 +20,12 @@ function kt2_vs_Sc(repo, wafers)
         kt2avg(k) = mean(kt2data);
         pcSc(k) = repo.getData(wafers{k}, 'master.ScContent');        
         
-        h = plot(pcSc(k), kt2avg(k), '.');
+        h = plot(pcSc(k), kt2max(k), '.');
         h.DisplayName = wafers{k};
         h.MarkerSize = 25;
     end
     
-    fitline(pcSc', kt2avg');
+    fitline(pcSc', kt2max');
     
     ylim([0 25]);
     
