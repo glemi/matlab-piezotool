@@ -15,15 +15,20 @@ function publish_1(repo, selection)
     fig 'publish:c33D~Sc';clf;
     generic_plot(repo, wafers, 'master.ScContent', 'coupling.c33D', @max);
     
-    wafers = {'CTI_01_02' 'CTI_01_05' 'CTI_01_06'  ...
-         'ASN_12_07' 'ASN_12_08' 'ASN_12_09' 'ASN_12_11' ...
-         'CTI_01_PT_05' 'CTI_01_Pt_17' 'CTI_01_Pt_19' 'CTI_01_Pt_25'};
+    wafers = {'CTI_01_02' 'CTI_01_06' ...
+         'ASN_12_02' 'ASN_12_04' 'ASN_12_05' 'ASN_12_06' ...
+         'CTI_01_PT_05' 'CTI_01_Pt_17' 'CTI_01_Pt_25'};
     
     fig 'publish:e31f~Sc';clf;
     generic_plot(repo, wafers, 'master.ScContent', 'e31.e31', @max);
+    legend show; legend location best;
+    
+    wafers = {'CTI_01_02' 'CTI_01_06' ...
+         'ASN_12_06' 'ASN_12_07' 'ASN_12_08' 'ASN_12_09'};
     
     fig 'publish:eps~Sc';clf;
     generic_plot(repo, wafers, 'master.ScContent', 'diel.eps10k', @max);
+    legend show; legend location best;
     
     fig 'publish:D~Sc';clf;
     generic_plot(repo, wafers, 'master.ScContent', 'diel.D10k', @max);

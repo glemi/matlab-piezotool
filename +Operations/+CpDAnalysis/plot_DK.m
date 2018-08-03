@@ -89,8 +89,8 @@ function fitplot(result, frequencies)
         h1.DisplayName = fname;
         h1.MarkerSize = 25;
         
-        R1 = 550;
-        R2 = 1150;
+        R1 = min(result.ElSizes)-50;
+        R2 = max(result.ElSizes)+50;
         
         R = R1:50:R2;
         skipcolor;

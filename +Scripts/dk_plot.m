@@ -14,8 +14,6 @@ function dk_plot(repo, wafers)
             continue;
         end
         
-        
-        
         eps = dnode.get('eps10k');
         D   = dnode.get('D10k');
         pos = dnode.get('Position');
