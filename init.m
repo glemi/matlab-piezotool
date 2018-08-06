@@ -17,6 +17,7 @@ function init
     addpath 'dependencies/libraries/For-Each';
     addpath 'dependencies/libraries/inputsdlg_v2.1.2';
     addpath 'dependencies/libraries/uicomponent';
+    addpath 'dependencies/libraries/buttondlg';
     addpath 'dependencies/libraries/mmx';
     
     addpath 'dependencies/coupling/fitting';
