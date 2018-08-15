@@ -17,6 +17,11 @@ classdef WaferDataNode < handle
             this.load();
         end
         function add(this, name, pos, value, interv)
+            if isa(value, 'uval')
+                this.add(name, pos, double(value), vertcat(value.Interval));
+                return;
+            end
+            
             tadd = table;
             tadd.Position = pos(:);          
             tadd.(name) = value(:);
