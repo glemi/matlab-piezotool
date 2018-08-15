@@ -30,13 +30,21 @@ function info = ident_std(file)
     if ~isempty(pmatch)
         match = pmatch;
         
-        index = str2double(regexprep(pmatch.sample, '\D', ''));
+        index1 = str2double(regexprep(pmatch.sample, '\D', ''));
         default_positions = [7 10 13 16 19 22 25 28 31 34 37 40 43 46 ...
                             49 52 55 58 61 64 67 70 73 76 79 82 85 88];
+                        
+        index2 = strncmpi(match.eltrode, {'600' '700' '800' '900' '1000' '1100'}, 3);
+        
         info.Mask = 'Photo';
         info.Params = 'ASN_8in_Photo';
-        info.Position = default_positions(index+1);
-        info.SampleIndex = index;
+        info.Position = default_positions(index1+1);
+        info.SampleIndex = index1;
+        
+        if any(index2)
+            relative = [-0.7 -0.7 0.7 -0.7 0.7 0.7];
+            info.Position = info.Position + relative(index2);
+        end
         
     elseif ~isempty(qmatch)
         match  = qmatch;
