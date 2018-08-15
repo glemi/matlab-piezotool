@@ -1,6 +1,6 @@
 function result = calcfcn(info,data)
     
-    f0  = round(logspace(3, 5, 21),-1);
+    f0  = round(logspace(3, 5, 21),-1)';
     n   = length(f0);
     
     elsize = info.ElSize;
@@ -11,7 +11,7 @@ function result = calcfcn(info,data)
     
     for k = 1:n
         C(k) = average_neighborhood(f0(k), data.f, data.Cp, 1.05);
-        D(k) = average_neighborhood(f0(k), data.f, data.D, 1.05);
+        D(k) = average_neighborhood(f0(k), data.f, data.D, 1.25);
     end
     
     [D0,Gp,Rs,model] = loss_fit(f0, double(C), double(D));
@@ -39,17 +39,16 @@ end
 
 function [D0, Gp, Rs, model] = loss_fit(f, C, D)
     function Deff = Deff_model(f, D0, Gp, Rs)
-%         persistent h;
+%          persistent h;
         w = 2*pi*f;
-        %Deff = ((w.*C*D0 + Gp).*(w*Rs.*C*D0 + Rs*Gp + 1) + (w*Rs.*C).^2/Rs)./(w.*C);
-        Deff = D0 + Gp./(w.*C) + w*R.*C;
-%         fig test;
-%         try delete(h); end
-%         h = plot(f, Deff);
+        Deff = D0 + Gp./(w.*C) + w*Rs.*C;
+%          fig test;
+%          try delete(h); end
+%          h = plot(f, Deff);
     end
 
-%     fig test; clf;
-%     plot(f, D, 'k', 'Linewidth', 2);
+%      fig test; clf; 
+%      plot(f, D, 'k', 'Linewidth', 2); xscale log; yscale log;
     
     initial = [1e-3 1e-9 1];
     modelfcn = @(c,f)Deff_model(f, abs(c(1)), abs(c(2)), abs(c(3)));

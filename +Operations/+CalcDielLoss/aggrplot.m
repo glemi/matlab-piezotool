@@ -33,7 +33,7 @@ function [outputArg1,outputArg2] = aggrplot(info,results)
     yscale log;
     
     axes(ax3);
-    plot(pos, double(Gp)*1e12, 'o');
+    plot(pos, double(Gp)*1e12, '-o');
     xlabel 'Position on Wafer [mm]';
     fillmarkers;
     
