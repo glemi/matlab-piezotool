@@ -10,7 +10,7 @@ function publish_1(repo, selection)
     
     fig 'publish:kt2~Sc';clf;
     generic_plot(repo, wafers, 'master.ScContent', 'coupling.kt2', @max);
-    legend show; legend location best;
+    %legend show; legend location eastoutside;
     
     fig 'publish:c33D~Sc';clf;
     generic_plot(repo, wafers, 'master.ScContent', 'coupling.c33D', @max);
@@ -21,14 +21,14 @@ function publish_1(repo, selection)
     
     fig 'publish:e31f~Sc';clf;
     generic_plot(repo, wafers, 'master.ScContent', 'e31.e31', @max);
-    legend show; legend location best;
+    %legend show; legend location eastoutside;
     
     wafers = {'CTI_01_02' 'CTI_01_06' ...
          'ASN_12_06' 'ASN_12_07' 'ASN_12_08' 'ASN_12_09'};
     
     fig 'publish:eps~Sc';clf;
     generic_plot(repo, wafers, 'master.ScContent', 'diel.eps10k', @max);
-    legend show; legend location best;
+    %legend show; legend location eastoutside;
     
     fig 'publish:D~Sc';clf;
     generic_plot(repo, wafers, 'master.ScContent', 'diel.D10k', @max);
@@ -68,6 +68,7 @@ function generic_plot(repo, wafers, xvar, yvar, op)
     fmt = Formatter(repo);
     fmt.formatAxes(xvar, yvar);
     
+    legend show; legend location eastoutside;
 end
 
 function fitline(x, y)

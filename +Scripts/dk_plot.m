@@ -33,7 +33,7 @@ function dk_plot(repo, wafers)
 %         plot(pos, D, 'o');
         
     end
-    
+    legend show; legend location best;
 %     subplot(2,2,1); fillmarkers;
 %     subplot(2,2,2); fillmarkers;
 end
