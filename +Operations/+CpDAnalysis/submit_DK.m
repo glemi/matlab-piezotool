@@ -6,7 +6,6 @@ function submit_DK(info,result,repo)
     
     pos = mean([info.Position]);
     
-    %rootdir = 'C:\Users\Nyffeler\switchdrive\AlScN_project\Analysis\Matlab\Repo';
     wafer = info(1).WaferID; 
     node = repo.getNode(wafer, 'diel');        
     

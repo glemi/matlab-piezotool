@@ -3,11 +3,11 @@ function plot_DK(info, result)
     i = FileTypes.SampleInfo.sort(info);
     info = info(i);
     
-    ax1 = subplot(2, 3, 1); title 'Areal Capacitance [pF/mm^2] and \epsilon_r';
-    ax2 = subplot(2, 3, 2); title 'Loss Factor [10^{-3}]';
-    ax3 = subplot(2, 3, 4); title '\epsilon_r vs frequency'
-    ax4 = subplot(2, 3, 5); title 'Loss Factor [10^{-3}]';
-    ax6 = subplot(2, 3, 6); title 'Delta R';
+	ax1 = subplot(3,2,1); title 'Areal Capacitance [pF/mm^2] and \epsilon_r';
+    ax2 = subplot(3,2,2); title 'Loss Factor [10^{-3}]';
+    ax3 = subplot(3,2,3); title '\epsilon_r vs frequency'
+    ax4 = subplot(3,2,4); title 'Loss Factor [10^{-3}]';
+    ax6 = subplot(3,2,6); title 'Delta R';
     
     name = FileTypes.SampleInfo.genRangeName(info); 
     pattern = 'Impedance / DK Analysis: %s (t = %.0f nm)';

@@ -56,6 +56,33 @@ function ops = def(ops)
         op.SubmitFcn = @Operations.CpDAnalysis.submit_DK;
     ops.add(op);
     
+    op = Operations.Operation('CpDAdvanced');
+        op.Title = 'Advanced Cp/D Analysis';
+        op.Description = ['Computes Capacitance, Loss Factor and '...
+            'dielectric constant from multiple CpD data files.'];
+        op.FileType = 'CpDData';
+        op.Aggregatable = true;
+        op.RawPlotFcn = @Operations.CpDAdvanced.cpd_plot;
+        op.CalculateFcn = @Operations.CpDAdvanced.calc_DK;
+        op.ResultPlotFcn = @Operations.CpDAdvanced.plot_DK;
+        op.SubmitFcn = @Operations.CpDAdvanced.submit_DK;
+    ops.add(op);
+    
+    
+    op = Operations.Operation('CalcDielLoss');
+        op.Title = 'Extract Dielectric Losses';
+        op.Description = ['Calculcates the dielectric loss Factor '...
+            'from CpD measurements, taking into account parsitic ' ...
+            'resistance and leakage conductance.'];
+        op.FileType = 'CpDData';
+        op.Aggregatable = false;
+        %op.RawPlotFcn = @Operations.CalcDielLoss.cpd_plot;
+        op.CalculateFcn = @Operations.CalcDielLoss.calcfcn;
+        op.ResultPlotFcn = @Operations.CalcDielLoss.resultplot;
+        op.MultiResultPlotFcn = @Operations.CalcDielLoss.aggrplot;
+        op.SubmitFcn = @Operations.CalcDielLoss.submit;
+    ops.add(op);
+    
     op = Operations.Operation('D33PolyFit');
         op.Title = 'd33 Polyfit';
         op.Description = ['Computes a median value from the d33 spectra' ...
