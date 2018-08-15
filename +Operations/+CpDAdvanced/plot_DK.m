@@ -25,13 +25,14 @@ function plot_DK(info, result)
     ax1.XGrid = 'on';
     xlabel 'Electrode Diameter [\mu{}m]';
     ylabel 'C/A'
-    fitplot(result, frequencies);
+    cfitplot(result, frequencies);
 
     legend show; legend location best;
     
     ylim_left = ylim;
     dualax right; ax = gca;
-    ylim(ylim_left*1e-6*result.Thick/epsilon0);
+    t = double(result.Thick)';
+    ylim(ylim_left*1e-6*t/epsilon0);
     ax.YTick = unique(round(ax.YTick, 1));
     %reduceTicks([], 5);
     ylabel '\epsilon_r' 
@@ -41,13 +42,9 @@ function plot_DK(info, result)
     axes(ax2);
     ax2.XTick = unique(result.ElSizes);
     ax2.XGrid = 'on';
-    xlabel 'Electrode Diameter [\mu{}m]';
-    
-    for f0 = frequencies
-        i = (result.f == f0);
-        plot(result.ElSizes, result.Dlocal(i,:)*1000, 'o');
-    end
-    fillmarkers;
+    xlabel 'Electrode Diameter [\mu{}m]';    
+    dfitplot(result, frequencies);
+
         
     axes(ax3);
     plot(result.f, double(result.epsFit));
@@ -68,8 +65,10 @@ function plot_DK(info, result)
     label([.25 .3], textFit);
     
     axes(ax4);
-    plot(result.f*1e-3, double(result.Davg));
+    %plot(result.f*1e-3, double(result.Davg));
+    plot(result.f*1e-3, double(result.Dlocal));
     xlabel 'f [kHz]';
+    xscale log;
     
     axes(ax6);
     plot(result.f, double(result.deltaR));
@@ -79,14 +78,58 @@ function plot_DK(info, result)
     xscale log; xUnitTicks Hz;
     
     axes(ax5);
-    plot(result.f, double(result.slope));
-    slope_med = median(double(result.slope));
+    plot(result.f, double(result.cslope));
+    slope_med = median(double(result.cslope));
     plot(result.f, slope_med*ones(size(result.f)), 'k--');
     xlabel frequency;
     xscale log; xUnitTicks Hz;
 end
 
-function fitplot(result, frequencies)
+function dfitplot(result, frequencies)
+    
+    function d = dmodel(r, i)
+        D0 = double(result.D0Fit(i));
+        Rs = double(result.Rs(i));
+        C  = double(result.Clocal(i));
+        sgma = double(result.sigma(i));
+        
+        A = (r.^2)*pi*1e-6;
+        w = 2*pi*result.f(i); 
+        G = sgma*A;
+        d = D0 + G./(w.*C) + w*Rs.*C;
+    end 
+
+     for f0 = frequencies
+        fname = sprintf('f = %s', siPrefix(f0, 'Hz'));
+        
+        i = (result.f == f0);
+        
+        d_slope = result.dslope(i,:);
+        d_original = result.Dlocal(i,:);
+        d_corrected = d_original - d_slope.*result.relpos;
+        h1 = plot(result.ElSizes, d_corrected, 'o'); fillmarkers('last'); skipcolor;
+        plot(result.ElSizes, d_original, 'o'); skiplegend;
+        
+        h1.DisplayName = fname;
+        
+        R1 = min(result.ElSizes)-50;
+        R2 = max(result.ElSizes)+50;
+        
+        R = R1:50:R2;
+        skipcolor;
+        h2 = plot(R, dmodel(R/2,i), '--'); 
+        skiplegend;
+        
+        D0fit = result.D0Fit(i);
+        skipcolor;
+        h3 = plot([R1 R2], [D0fit D0fit], '-');
+        skiplegend;
+        
+     end
+end
+
+
+function cfitplot(result, frequencies)
     
     function c = cmodel(r, i)
         c0 = double(result.cFit(i));
@@ -99,7 +142,7 @@ function fitplot(result, frequencies)
         
         i = (result.f == f0);
         
-        c_slope = result.slope(i,:);
+        c_slope = result.cslope(i,:);
         c_original = result.clocal(i,:);
         c_corrected = c_original - c_slope.*result.relpos;
         h1 = plot(result.ElSizes, c_corrected, 'o'); fillmarkers('last'); skipcolor;
