@@ -7,6 +7,7 @@ function plot_DK(info, result)
     ax2 = subplot(3,2,2); title 'Loss Factor [10^{-3}]';
     ax3 = subplot(3,2,3); title '\epsilon_r vs frequency'
     ax4 = subplot(3,2,4); title 'Loss Factor [10^{-3}]';
+    ax5 = subplot(3,2,5); title 'Local Gradient [pF/mm^2 / mm]';
     ax6 = subplot(3,2,6); title 'Delta R';
     
     name = FileTypes.SampleInfo.genRangeName(info); 
@@ -49,8 +50,9 @@ function plot_DK(info, result)
     fillmarkers;
         
     axes(ax3);
-    plot(result.f, result.epsFit);
-    plot(result.f, result.epsAvg);
+    plot(result.f, double(result.epsFit));
+    plot(result.f, double(result.epsAvg));
+    plot(result.f, double(result.epsCorr));
     
     ax3.YTick = unique(round(ax.YTick, -1));
     ax3.XScale = 'log';
@@ -58,17 +60,28 @@ function plot_DK(info, result)
     xlabel frequency;
     
     i10k = (result.f == 10e3);
-    label([.25 .7], sprintf('$\\varepsilon_r$(10kHz) = %.2f (average)', result.epsAvg(i10k)));
-    label([.25 .3], sprintf('$\\varepsilon_r$(10kHz) = %.2f (fit)', result.epsFit(i10k)));
+    textAvg = '$\\varepsilon_r$(10kHz) = %.2f $\\pm %.2f$ (average)';
+    textFit = '$\\varepsilon_r$(10kHz) = %.2f $\\pm %.2f$ (fit)';
+    textAvg = sprintf(textAvg, result.epsAvg(i10k).Value, result.epsAvg(i10k).Delta);
+    textFit = sprintf(textFit, result.epsFit(i10k).Value, result.epsFit(i10k).Delta);
+    label([.25 .7], textAvg);
+    label([.25 .3], textFit);
     
     axes(ax4);
-    plot(result.f*1e-3, result.Davg);
+    plot(result.f*1e-3, double(result.Davg));
     xlabel 'f [kHz]';
     
     axes(ax6);
-    plot(result.f, result.deltaR);
-    deltaR_med = median(result.deltaR);
+    plot(result.f, double(result.deltaR));
+    deltaR_med = median(double(result.deltaR));
     plot(result.f, deltaR_med*ones(size(result.f)), 'k--');
+    xlabel frequency;
+    xscale log; xUnitTicks Hz;
+    
+    axes(ax5);
+    plot(result.f, double(result.slope));
+    slope_med = median(double(result.slope));
+    plot(result.f, slope_med*ones(size(result.f)), 'k--');
     xlabel frequency;
     xscale log; xUnitTicks Hz;
 end
@@ -76,8 +89,8 @@ end
 function fitplot(result, frequencies)
     
     function c = cmodel(r, i)
-        c0 = result.cFit(i);
-        d  = result.deltaR(i);
+        c0 = double(result.cFit(i));
+        d  = double(result.deltaR(i));
         c = c0*(1 + 2*d./r + d^2./r.^2);
     end 
 
@@ -85,9 +98,14 @@ function fitplot(result, frequencies)
         fname = sprintf('f = %s', siPrefix(f0, 'Hz'));
         
         i = (result.f == f0);
-        h1 = plot(result.ElSizes, result.clocal(i,:), '.');
+        
+        c_slope = result.slope(i,:);
+        c_original = result.clocal(i,:);
+        c_corrected = c_original - c_slope.*result.relpos;
+        h1 = plot(result.ElSizes, c_corrected, 'o'); fillmarkers('last'); skipcolor;
+        plot(result.ElSizes, c_original, 'o'); skiplegend;
+        
         h1.DisplayName = fname;
-        h1.MarkerSize = 25;
         
         R1 = min(result.ElSizes)-50;
         R2 = max(result.ElSizes)+50;

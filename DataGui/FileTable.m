@@ -112,7 +112,7 @@ classdef FileTable < handle
             this.refresh;
         end
         function onOpenConfigFile(this)
-            file = this.SelectedFiles.Info.Config.filepath;
+            file = this.SelectedFiles(1).Info.Config.filepath;
             Auxilary.sysopen(file, 'notepad++');
         end
     end

@@ -21,8 +21,8 @@ function result = calc_DK(info, data)
     for i = 1:m
         for k = 1:n
             this = data(k);
-            C_local(i,k) = average_neighborhood(f0(i), this.f, this.Cp, 1.05);
-            D_local(i,k) = average_neighborhood(f0(i), this.f, this.D, 1.05);
+            C_local(i,k) = average_neighborhood(f0(i), this.f, this.Cp, 1.1);
+            D_local(i,k) = average_neighborhood(f0(i), this.f, this.D, 1.1);
         end
         
         c_local(i,:) = C_local(i,:)./elarea*1e12;
@@ -50,12 +50,15 @@ function result = calc_DK(info, data)
     result.epsAvg = epsr_avg;
     result.epsFit = epsr_fit;
     
-    i = (f0 == 1e3);
+    i = (f0 == 10000);
     result.eps10k = epsr_fit(i);
     result.D10k   = D_avg(i);
     result.c10k   = c_fit(i);
 end
 
+function compute_eps()
+    
+end
 
 function [C0, delta, func] = delta_fit(R, C)
     initial = [min(C) 1];
@@ -82,11 +85,13 @@ function y_avg = average_neighborhood(f0, f, y, range_factor)
     y_avg = median(y(indices));
 end
 
-function t = get_thickness(sampledata)
+function [tPiezo, tSeed] = get_thickness(sampledata)
     if ~isempty(sampledata.Config)
         layers = sampledata.Config.layers;
         player = structFind(layers, 'type', 'PL');
-        t = player.thickness;
+        slayer = structFind(layers, 'type', 'PS'); 
+        tPiezo = player.thickness;
+        tSeed = slayer.thickness;
     else
         error 'Config Data needed for this operation.';
     end

@@ -1,5 +1,5 @@
 % New User Script: Enter Title on next line
-% #Title: "Plot Dielectric Constant" 
+% #Title: "Plot Dielectric Constant (Advanced)" 
 % Description goes here
 function dk_plot(repo, wafers)
 
@@ -7,7 +7,7 @@ function dk_plot(repo, wafers)
 
     n = length(wafers);
     for k = 1:n
-        dnode = repo.getNode(wafers{k}, 'diel');
+        dnode = repo.getNode(wafers{k}, 'diel2');
         snode = repo.getNode(wafers{k}, 'stress');
         
         if isempty(dnode.DataTable)
@@ -15,7 +15,7 @@ function dk_plot(repo, wafers)
         end
         
         eps = dnode.get('eps10k');
-        D   = dnode.get('D10k');
+        D   = dnode.get('D40k');
         pos = dnode.get('Position');
         
         subplot(3,2,1); posPlot(dnode, 'eps10k', 1, '$\varepsilon_{33,f}$');
@@ -33,7 +33,7 @@ function dk_plot(repo, wafers)
 %         plot(pos, D, 'o');
         
     end
-    legend show; legend location best;
+    
 %     subplot(2,2,1); fillmarkers;
 %     subplot(2,2,2); fillmarkers;
 end

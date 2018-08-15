@@ -9,6 +9,7 @@ classdef DataTable < handle
         NodeType
         Node
         Formatter
+        Selection
     end
     
     methods
@@ -20,6 +21,13 @@ classdef DataTable < handle
             this.UiTable.Data = {'No Wafer Selected'};
             %this.UiTable.ColumnWidth = {350 80};
             this.Formatter = Formatter(repo);
+            
+            tablemenu = uicontextmenu;
+            uimenu(tablemenu, 'Label', 'Copy Selected', 'Callback', @(~,~)this.onCopySelectedCells);
+            uimenu(tablemenu, 'Label', 'Copy Entire Table', 'Callback', @(~,~)this.onCopyEntireTable);
+            uimenu(tablemenu, 'Label', 'Delete Rows', 'Callback', @(~,~)this.onDeleteRows);
+            this.UiTable.UIContextMenu = tablemenu;
+            this.UiTable.CellSelectionCallback = @(~,e)this.onCellSelect(e.Indices);
         end
         
         function clear(this)
@@ -56,11 +64,49 @@ classdef DataTable < handle
     end
     
     methods(Access = private)
-        function onEditCell(this, s,e)
+        function onEditCell(this,s,e)
             index = e.Indices(1);
             newState = logical(e.NewData);
             this.Node.DataTable{index,'Enabled'} = newState;
             this.Node.write;
+        end
+        function onCellSelect(this, indices)
+            this.Selection = indices;
+        end
+        function onCopySelectedCells(this)
+            indices = this.Selection;
+            rows = unique(indices(:,1));
+            cols = unique(indices(:,2));
+            data = this.Node.DataTable(rows, cols);
+            Auxilary.table2clip(data, 'withheaders');
+        end
+        function onCopyEntireTable(this)
+            data = this.Node.DataTable;
+            Auxilary.table2clip(data, 'withheaders');
+        end
+        function onDeleteRows(this)
+            indices = this.Selection;
+            rows = unique(indices(:,1));
+            if isempty(rows)
+                return;
+            end
+            
+            msg = ['Delete Rows %d-%d: Are you sure? Note that this ' ...
+                 'cannot be undone, other than recomputing the values ' ... 
+                 'from the original measurement files. \n\nYou ' ...
+                 'can also uncheck the "Enabled" box to exclude ' ... 
+                 'data from any plots or computations.'];
+            msg = sprintf(msg, min(indices(:,1)), max(indices(:,1)));
+            title = 'Delete Rows';
+            options.Default = 'Cancel';
+            options.IconString = 'warn';
+            answer = buttondlg(msg, title, 'Yes', 'Cancel', options);
+            
+            if strcmpi(answer, 'yes')
+                this.Node.DataTable(rows,:) = [];
+                this.Node.write;
+                this.refresh;
+            end
         end
     end
     

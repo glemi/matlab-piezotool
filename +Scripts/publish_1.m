@@ -24,7 +24,8 @@ function publish_1(repo, selection)
     %legend show; legend location eastoutside;
     
     wafers = {'CTI_01_02' 'CTI_01_06' ...
-         'ASN_12_06' 'ASN_12_07' 'ASN_12_08' 'ASN_12_09'};
+         'ASN_12_06' 'ASN_12_07' 'ASN_12_08' 'ASN_12_09' ...
+         'CTI_01_PT_05' 'CTI_01_Pt_17' 'CTI_01_Pt_19' 'CTI_01_Pt_25'};
     
     fig 'publish:eps~Sc';clf;
     generic_plot(repo, wafers, 'master.ScContent', 'diel.eps10k', @max);

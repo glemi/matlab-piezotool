@@ -17,14 +17,17 @@ classdef FileBrowser < handle
         end
         
         function files = getFiles(this, path)
-           files = dir(path);
-           i = ~[files.isdir];
-           files = files(i);
+            files = dir(path);
+            i = ~[files.isdir];
+            files = files(i);
            
-           i = this.TypeStore.filter(files);
+            i = this.TypeStore.filter(files);
            
-           files = files(i);
-           [files.folder] = deal(path);
+            files = files(i);
+            if ~isdir(path)
+                path = fileparts(path);
+            end
+            [files.folder] = deal(path);
         end
         
         function folders = getSubfolders(this, path)
