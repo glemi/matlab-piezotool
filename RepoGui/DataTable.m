@@ -39,6 +39,10 @@ classdef DataTable < handle
             this.Node = this.WaferRepo.getNode(this.WaferId, this.NodeType);
             dtable = this.Node.DataTable;
             names = dtable.Properties.VariableNames;
+            i = contains(names, {'_lo' '_hi'});
+            dtable(:,i) = [];
+            names(i) = [];
+            
             this.UiTable.CellEditCallback = @this.onEditCell;
             try
                 switch this.NodeType 
