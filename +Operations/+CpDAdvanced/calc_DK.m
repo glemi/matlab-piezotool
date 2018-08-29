@@ -26,7 +26,7 @@ function result = calc_DK(info, data)
         for k = 1:n
             this = data(k);
             C_local(i,k) = average_neighborhood(f0(i), this.f, this.Cp, 1.05);
-            D_local(i,k) = average_neighborhood(f0(i), this.f, this.D, 1.05);
+            D_local(i,k) = average_neighborhood(f0(i), this.f, this.D, 1.25);
         end
     end
     
@@ -50,7 +50,7 @@ function result = calc_DK(info, data)
     
     c_slope = repmat(relpos,m,1)*mslope;
     c_delta = 1 + 2*mdelta./repmat(radius,m,1);    
-    c_corr = (c_local - c_slope)/c_delta;    
+    c_corr = (c_local - c_slope)./c_delta;    
     c_corr = mean(c_corr,2);
     
     c_avg = mean(c_local,2);
@@ -149,10 +149,12 @@ function [C0, delta, slope, func] = delta_fit(R, x, C)
 end
 
 function [D0, Gp, Rs] = loss_fit(f, C, D)
+    D = double(D);
+    C = double(C);
     
     function Deff = Deff_model(f, C, D0, Gp, Rs)
-        w = 2*pi*f;
-        Deff = ((w*C*D0 + Gp).*(w*Rs*C*D0 + Rs*Gp + 1) + (w*Rs*C).^2/Rs)./(w*C);
+        w = 2*pi*f(:);
+        Deff = D0 + Gp./(w.*C) + w*Rs.*C;
     end
     
     initial = [1e-3 1e-9 1];

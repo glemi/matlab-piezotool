@@ -34,6 +34,9 @@ function dk_plot(repo, wafers)
         
     end
     
+    subplot(3,2,1);
+    legend show; legend location best;
+    
 %     subplot(2,2,1); fillmarkers;
 %     subplot(2,2,2); fillmarkers;
 end

@@ -42,13 +42,13 @@ function plot_DK(info, result)
     ax2.XTick = unique(result.ElSizes);
     ax2.XGrid = 'on';
     xlabel 'Electrode Diameter [\mu{}m]';
-    
+    xlim(ax1.XLim);
     for f0 = frequencies
         i = (result.f == f0);
         plot(result.ElSizes, result.Dlocal(i,:)*1000, 'o');
     end
     fillmarkers;
-        
+    
     axes(ax3);
     plot(result.f, double(result.epsFit));
     plot(result.f, double(result.epsAvg));
@@ -69,7 +69,9 @@ function plot_DK(info, result)
     
     axes(ax4);
     plot(result.f*1e-3, double(result.Davg));
-    xlabel 'f [kHz]';
+    xscale log;
+    xUnitTicks Hz;
+    xlabel frequency;
     
     axes(ax6);
     plot(result.f, double(result.deltaR));

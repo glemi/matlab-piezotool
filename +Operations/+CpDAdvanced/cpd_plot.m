@@ -56,7 +56,6 @@ function cpd_plot(info, data)
     ylabel 'Dielectric Loss Factor D';
     xscale log;
     
-    
     i = data.f > 8e3 & data.f < 12e3; 
     plot(data.f(i), data.D(i), 'r', 'linewidth', 2);
     D10k = mean(data.D(i));
@@ -69,6 +68,26 @@ function cpd_plot(info, data)
     label([0.5, 0.7], txtG);
     label([0.5, 0.6], txtR);
     label([0.5, 0.2], txtD10k);
+    
+    
+    subplot(2,2,3);
+    p = polyfit(log10(data.f), data.Cp, 2);
+    CpFit = polyval(p, log10(data.f));
+    plot(data.f, data.Cp);
+    plot(data.f, CpFit);
+    xscale log;
+    
+    [~, i10k] = min(abs(data.f-1e4));
+    
+    CpSlope = p(2) + 2*p(1)*log10(data.f);
+    
+    plot(data.f, CpFit(i10k) + (log10(data.f)-4)*CpSlope(i10k))
+    plot(1e4, CpFit(i10k), 'o'); fillmarkers;
+    
+    s10k = CpSlope(i10k);
+    
+    txtS = sprintf('slope of $C_p = $ per decade');
+    
 end
 
 
