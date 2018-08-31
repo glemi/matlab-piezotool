@@ -40,7 +40,24 @@ classdef WaferMasterNode < handle
                 interv = [plus minus];
             end
         end
-        
+        function uv = uget(this, name)
+            value = this.get(name);
+            
+            if this.has([name '_lo']) && this.has([name '_hi'])
+                lo = this.get([name '_lo']);
+                hi = this.get([name '_hi']);
+                uv = uval(value, [lo hi], 'interval');
+            elseif this.has([name '_plus']) && this.has([name '_minus'])
+                pl = this.get([name '_plus']);
+                mn = this.get([name '_minus']);
+                uv = uval(value, [pl mn], 'delta');
+            elseif this.has([name '_delta'])
+                dt = this.get([name '_delta']);
+                uv = uval(value, dt, 'delta');
+            else
+                uv = uval(value);
+            end
+        end
         function [file, path] = getDataFile(this)
             rootdir = this.WaferRepo.RootDir;
             filename = 'master.node.csv';
@@ -70,6 +87,11 @@ classdef WaferMasterNode < handle
             
             this.DataTable = sortrows(this.DataTable, 'Position');
             writetable(this.DataTable, filepath, 'Delimiter', ';');
+        end
+        
+        function yes = has(this, name)
+            names = this.DataTable.Properties.VariableNames;
+            yes = ismember(name, names);
         end
     end
 end

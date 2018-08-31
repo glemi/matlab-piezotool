@@ -55,7 +55,7 @@ classdef WaferDataNode < handle
                 this.dataTable{i,'Enabled'} = logical(value);
             end
         end
-        function [value, interv] = get(this, name, pos)
+        function value = get(this, name, pos)
             if isempty(this.DataTable)
                 value = NaN; interv = NaN; return;
             end
@@ -69,11 +69,27 @@ classdef WaferDataNode < handle
             
             i = this.DataTable.Enabled;
             value(~i,1) = NaN;
+        end
+        function uv = uget(this, name, pos)
+            if nargin < 3
+                pos = this.DataTable.Position;
+            end
             
-            if nargout == 2
-                plus = this.get([name '_lo'], pos);
-                minus = this.get([name '_hi'], pos);
-                interv = [plus minus];
+            value = this.get(name, pos);
+            
+            if this.has([name '_lo']) && this.has([name '_hi'])
+                lo = this.get([name '_lo'], pos);
+                hi = this.get([name '_hi'], pos);
+                uv = uval(value, [lo hi], 'interval');
+            elseif this.has([name '_plus']) && this.has([name '_minus'])
+                pl = this.get([name '_plus'], pos);
+                mn = this.get([name '_minus'], pos);
+                uv = uval(value, [pl mn], 'delta');
+            elseif this.has([name '_delta'])
+                dt = this.get([name '_delta'], pos);
+                uv = uval(value, dt, 'delta');
+            else
+                uv = uval(value);
             end
         end
         function value = interp(this, name, pos)
@@ -137,13 +153,20 @@ classdef WaferDataNode < handle
                 this.DataTable(i,'Enabled') = true(sum(i), 1);
             end
         end
-        
         function reorderColumns(this)
             t_enb = this.DataTable(:,'Enabled');
             t_pos = this.DataTable(:,'Position');
             [~,i_oth] = ismember(this.DataTable.Properties.VariableNames, {'Enabled' 'Position'});
             t_oth = this.DataTable(:,~i_oth);
             this.DataTable = [t_enb t_pos t_oth];
+        end
+        function yes = has(this, name)
+            names = this.DataTable.Properties.VariableNames;
+            yes = ismember(name, names);
+        end
+        function interv = getUncert(this, name)
+            
+                
         end
     end
 end
