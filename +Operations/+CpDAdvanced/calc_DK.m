@@ -12,7 +12,7 @@ function result = calc_DK(info, data)
     c_local = uval(NaN(m,n));
     c_fit = uval(NaN(m,1));
     delta = uval(NaN(m,1));
-    slope = uval(NaN(m,1));
+    grad = uval(NaN(m,1));
     
     abspos = [info.Position];
     refpos = round(mean([abspos]),1);
@@ -35,7 +35,7 @@ function result = calc_DK(info, data)
         [c,d,s] = delta_fit(radius, relpos, c_local(i,:));
         c_fit(i,1) = c;
         delta(i,1) = d; 
-        slope(i,1) = s; 
+        grad(i,1) = s; 
     end
     
     for k = 1:n
@@ -43,55 +43,68 @@ function result = calc_DK(info, data)
         D0_fit(k) = d;
         Gp_fit(k) = g;
         Rs_fit(k) = r;
+        
+        p = polyfit(log10(data(k).f), data(k).Cp, 2);
+        Cpfit = polyval(p, log10(data(k).f));
+        Cp_slope(k,:) = ( p(2) + 2*p(1)*log10(data(k).f) ) ./Cpfit;
     end
     
-    mslope = mean(slope);
+    mgrad = mean(grad);
     mdelta = mean(delta);
     
-    c_slope = repmat(relpos,m,1)*mslope;
+    c_grad = repmat(relpos,m,1)*mgrad;
     c_delta = 1 + 2*mdelta./repmat(radius,m,1);    
-    c_corr = (c_local - c_slope)./c_delta;    
+    c_corr = (c_local - c_grad)./c_delta;    
     c_corr = mean(c_corr,2);
     
     c_avg = mean(c_local,2);
     D_avg = mean(D_local,2);
+    s_avg = mean(Cp_slope,2);
     
     epsr_fit = compute_eps(c_fit*1e-6, info(1).Config);
     epsr_avg = compute_eps(c_avg*1e-6, info(1).Config);
     epsr_corr = compute_eps(c_corr*1e-6, info(1).Config);
     
-    result.f = f0;
-    result.ElSizes = elsize;
-    result.ElAreas = elarea;
-    result.Thick   = thickn;
-    result.Clocal  = C_local;
-    result.clocal  = c_local;
-    result.Dlocal  = D_local;
-    result.cAvg   = c_avg(:);
-    result.cFit   = c_fit(:);
-    result.cCorr  = c_corr(:);
-    result.Davg   = D_avg(:);
-    result.deltaR = delta(:);
-    result.slope  = slope(:);
-    result.relpos = relpos;
-    result.epsAvg = epsr_avg;
-    result.epsFit = epsr_fit;
-    result.epsCorr = epsr_corr;
+    result.f = f0;                  % Frequency points where evaluated
+    result.ElSizes = elsize;        % Electrode diameter in um (e)
+    result.ElAreas = elarea;        % Electrode area in mm^2 (e)
+    result.Thick   = thickn;        % Piezo film thickness (s)
+    result.Clocal  = C_local;       % Abs capacitance (f)
+    result.clocal  = c_local;       % Areal capacitance (f)
+    result.Dlocal  = D_local;       % Loss factor (f)
+    result.Cslope = s_avg(:);       % Relative slope of Cp per decade (f)
+    result.cAvg   = c_avg(:);       % Average areal capacitance (f)
+    result.cFit   = c_fit(:);       % Fit of areal capacitance (f)
+    result.cCorr  = c_corr(:);      % Areal cap corrected (f)
+    result.Davg   = D_avg(:);       % Average loss factor (f)
+    result.deltaR = delta(:);       % Electrode radius error from fit (f)
+    result.grad  = grad(:);         % Local gradient of areal cap (f)
+    result.relpos = relpos;         % Relative position of electrode (e)
+    result.epsAvg = epsr_avg;       % DK from average capacitance (f) 
+    result.epsFit = epsr_fit;       % DK from capacitance fit (f)
+    result.epsCorr = epsr_corr;     % DK from corrected capacitance (f)
+    % legend: (f) function of frequency [column]
+    %         (e) function of electrode [row]
+    
+    result.Dmin = min(D_avg);
     
     i = (f0 == 10000);
     result.eps10k = epsr_fit(i);
     result.D10k   = D_avg(i);
     result.c10k   = c_fit(i);
+    result.s10k   = s_avg(i);
     
     i = (f0 == 19950);
     result.eps20k = epsr_fit(i);
     result.D20k   = D_avg(i);
     result.c20k   = c_fit(i);
+    result.s20k   = s_avg(i);
     
     i = (f0 == 39810);
     result.eps40k = epsr_fit(i);
     result.D40k   = D_avg(i);
     result.c40k   = c_fit(i);
+    result.s40k   = s_avg(i);
 end
 
 function epsPiezo = compute_eps(cap, config)
@@ -127,7 +140,7 @@ function value = getConfigValue(config, name)
     end
 end
 
-function [C0, delta, slope, func] = delta_fit(R, x, C)
+function [C0, delta, grad, func] = delta_fit(R, x, C)
     function c = model(coeffs, r)
         c0 = coeffs(1); % reference areal capacity
         d = coeffs(2); % delta_R (absolute error in electrode radius)
@@ -144,7 +157,7 @@ function [C0, delta, slope, func] = delta_fit(R, x, C)
     
     C0    = uval(final(1), interv(1,:), 'interval');
     delta = uval(final(2), interv(2,:), 'interval');
-    slope = uval(final(3), interv(3,:), 'interval');
+    grad  = uval(final(3), interv(3,:), 'interval');
     func  = @(r)model(final,r);
 end
 

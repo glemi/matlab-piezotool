@@ -5,7 +5,7 @@ function init
     set(groot, 'DefaultLineMarkerSize', 6);
     set(groot, 'DefaultLineLineWidth', 1.2);
     set(groot, 'DefaultErrorBarLineWidth', 1.2);
-    set(groot, 'DefaultErrorBarMarkerSize', 16);
+    set(groot, 'DefaultErrorBarMarkerSize', 6);
     
     warning off MATLAB:table:RowsAddedNewVars;
 

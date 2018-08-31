@@ -81,11 +81,14 @@ function plot_DK(info, result)
     xscale log; xUnitTicks Hz;
     
     axes(ax5);
-    plot(result.f, double(result.slope));
-    slope_med = median(double(result.slope));
+    plot(result.f, double(result.grad));
+    slope_med = median(double(result.grad));
     plot(result.f, slope_med*ones(size(result.f)), 'k--');
     xlabel frequency;
     xscale log; xUnitTicks Hz;
+
+%     axes(ax5); title('');
+%     plot(result.ElSizes, result.Cslope, 'o');
 end
 
 function fitplot(result, frequencies)
@@ -101,7 +104,7 @@ function fitplot(result, frequencies)
         
         i = (result.f == f0);
         
-        c_slope = result.slope(i,:);
+        c_slope = result.grad(i,:);
         c_original = result.clocal(i,:);
         c_corrected = c_original - c_slope.*result.relpos;
         h1 = plot(result.ElSizes, c_corrected, 'o'); fillmarkers('last'); skipcolor;

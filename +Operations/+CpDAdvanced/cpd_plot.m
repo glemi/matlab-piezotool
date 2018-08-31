@@ -86,7 +86,12 @@ function cpd_plot(info, data)
     
     s10k = CpSlope(i10k);
     
-    txtS = sprintf('slope of $C_p = $ per decade');
+    txtS = sprintf('slope of $C_p = %.2f\\,$pF per decade', s10k*1e12);
+    %label([0.1 0.1], txtS);
+    
+    srel10k = s10k/CpFit(i10k);
+    txtSr = sprintf('slope of $C_p = %.2f\\,$\\%% per decade', srel10k*100);
+    label([0.1 0.1], txtSr);
     
 end
 
